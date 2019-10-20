@@ -1,0 +1,597 @@
+import defaultTheme, { prism } from "@mdx-deck/themes";
+import Highlighter from "react-syntax-highlighter";
+
+import myTheme from "./theme";
+
+export const theme = myTheme;
+
+import {
+  Head,
+  Image,
+  Notes,
+  Appear,
+  Invert,
+  Split,
+  SplitRight,
+  FullScreenCode,
+  Horizontal
+} from "mdx-deck";
+
+#### Introduction to
+
+# Security Standards in the Cloud
+
+---
+
+import login from "./assets/login.png";
+
+<img src={login} width="40%" />
+
+<Notes>
+
+- In the beginning there were passwords to protect resources.
+
+</Notes>
+
+---
+
+import computer from "./assets/computer.svg";
+
+<img src={computer} width="20%" />
+
+<Notes>
+
+- With computers, we naturally applied the same concept to apps and machines.
+
+</Notes>
+
+---
+
+import domain from "./assets/domain.svg";
+
+<img src={domain} width="40%" />
+
+<Notes>
+
+- With the Internet, we realized that letting apps and machines handle authentication on their own was a bad idea.
+  - lots of duplicated passwords and lots of logins
+- The first authentication protocols appeared, such as Kerberos.
+  - The problem with these protocols was that authentication was centralized on domain controllers.
+  - Users, apps and services needed to be under the same organization.
+
+</Notes>
+
+---
+
+import saml from "./assets/saml.svg";
+
+<img src={saml} width="60%" />
+
+<Notes>
+
+- Big IT players assembled a committee to solve the problem. The solution was SAML
+- With SAML, a user that belonged to company A could consume a service on company B in a reliable way and without requiring companies to duplicate user profile
+- The protocol was conceived in a way that enabled the service provider (company B in this
+  case) to validate the user identity on the fly
+- Problem with SAML is that it is heavily based on XML, verbose and fragile (changing order of nodes would invalidate tokens)
+- It ended up being used in the business world. Very powerful but kinda too big for the purpose in the consumer world.
+
+</Notes>
+
+---
+
+import oauth2 from "./assets/oauth.png";
+
+<img src={oauth2} width="20%" />
+
+<Notes>
+
+- The OAuth protocol was created specifically to handle delegated authorization scenarios, like when you let a random application post something on Facebook as if it was you.
+- It is a standard that provides authorization in the cloud with consent.
+- However, it got so much traction that developers started using it to do things it was not created to do, like handling end-user authentication.
+
+</Notes>
+
+---
+
+import openidconnect from "./assets/openidconnect.png";
+
+<img src={openidconnect} width="20%" />
+
+<Notes>
+ - OpenID Connect is a concrete standard protocol for authenticating end users derived on top of the oAuth 2.0 framework/protocol. As such is also called a profile of OAuth 2.0. There are others.
+ - It extends OAuth 2.0 by providing an identity layer for authentication. It's tiny, adds some 5-10% the the OAuth flows.
+ - It allows cloud based applications to retrieve identity information along with details about the authentication event. 
+ - Enables SSO for mobile and web based apps.
+
+</Notes>
+
+---
+
+#### How OAuth 2.0 works
+
+# from passwords to tokens
+
+---
+
+# Authentication vs. Authorization
+
+<Notes>
+
+- Authentication is the process of confirming the identity of an entity (e.g., a user)
+- An authentication process usually relies on some form of proof. For example, if you go to the bank and try to withdraw money from your account, the clerk might ask you for an ID (an official document) to check who you are.
+- In contrast, authorization refers to the process of verifying what entities can access, or what actions they
+  can perform.
+
+</Notes>
+
+---
+
+import tickets from "./assets/tickets.png";
+
+<img src={tickets} width="50%" />
+
+<Notes>
+
+For a concrete example, imagine a situation where some people get tickets for a concert. In this case,
+more often than not, the establishment will not be interested in their identity (i.e., on who they are). What
+they care about is whether they are authorized or not to attend the show. To prove that they have the right
+to be there, instead of using an ID or a passport, they would use a ticket that contains no information
+about you.
+
+</Notes>
+
+---
+
+import oauth2slide from "./assets/oauth2_slide.png";
+
+<img src={oauth2slide} width="100%" />
+
+<Notes>
+
+- It uses REST architectural style and JSON to request and retrieve tokens to grant access to cloud resources.
+- It can securely issue and validate tokens for services on the Internet.
+
+</Notes>
+
+---
+
+# OAuth 2.0 Roles
+
+import oauth_participants_roles from "./assets/oauth_participants_roles.svg";
+
+<img src={oauth_participants_roles} width="100%" />
+
+<Notes>
+
+- The Resource Owner, or user. Who owns the data.
+- The Client application. Who wants to manipulate the user data. Eg. a web or mobile app.
+- The Authorization Server issues access tokens to the Client app, which are used to request access to the user data.
+- The Resource Server retrieves the user data, if the owner authorizes it.
+
+</Notes>
+
+---
+
+import oauthflow1 from "./assets/oauthflow1.svg";
+
+<img src={oauthflow1} width="50%" />
+
+<Notes>
+
+- This is what should happen for the Client App to obtain an access token and to be able to access a protected resource, such an API endpoint, a particular address etc.
+- In order to obtain this access token, the Client needs to present a valid grant type to the authorization server.
+- Also reffered to as flows, the participants interact through them.
+
+</Notes>
+
+---
+
+# Grant Types
+
+import grant_types from "./assets/grant_types.png";
+
+<Appear>
+  <img src={grant_types} width="50%" />
+</Appear>
+
+<Notes>
+
+The most common ones are Authorization code and implicit. Widely used for web and mobile apps.
+They are both called redirect flows, because they operate through Redirect URLs.
+
+</Notes>
+
+---
+
+# The Authorization Code Flow
+
+<ul>
+  <li>Client prepares and sends an Authentication Request</li>
+
+<Highlighter language="http">{`HTTP/1.1 302 Found
+Location: https://auth.server.co.uk/authorize?
+          response_type=code
+          &scope=myapi-read myapi-write
+          &client_id=s6BhdRkqt3
+          &state=bunnies
+          &redirect_uri=http://client.example.org/cb
+`}</Highlighter>
+</ul>
+
+<Notes>
+
+The client initiates the code flow by redirecting the browser to the authorisation server with an authorisation request.
+
+The authorisation request parameters are encoded in the URI query:
+
+- response_type: set to code to indicate an authorisation code flow.
+- scope: specifies the scope of the requested token. If omitted the authorisation server may assume some default scope.
+- client_id: the identifier of the client at the authorisation server. This identifier is assigned when the client is registered with the authorisation server, via the client registration API, a developer console, or some other method.
+- state: optional opaque value set by the client to maintain state between request and callback.
+- redirect_uri: the client callback URI for the authorisation response. If omitted the authorisation server will assume the default registered redirection URI for the client.
+
+</Notes>
+
+---
+
+import login_consent from "./assets/login_consent.png";
+
+# The Authorization Code Flow
+
+<ul>
+  <li>Authorization Server Authenticates the End-User and obtains consent</li>
+
+<img src={login_consent} width="100%" />
+
+</ul>
+
+<Notes>
+  At the authorisation server, the user will typically be authenticated by
+  checking if they have a valid session (established by a browser cookie), and
+  in the absence of that, by prompting the user to login. After that the server
+  will determine if the client is to be authorised or not, by asking the user
+  for their consent, by applying a rule or policy, or by some other mean.
+</Notes>
+
+---
+
+# The Authorization Code Flow
+
+<ul>
+  <li>
+    Authorization Server sends back to the Client with an Authorization Code
+  </li>
+  <Highlighter language="http">{`HTTP/1.1 302 Found
+Location: https://client.example.org/cb?
+          code=SplxlOBeZQQYbYS6WxSbIA
+          &state=bunnies`}</Highlighter>
+</ul>
+
+<Notes>
+The authorisation server will then call the client redirect_uri with an authorisation code (on success) or an error code (if access was denied, or some other error occurred, such a malformed request was detected).
+
+The client must validate the state parameter, and use the code to proceed to the next step - exchanging the code for the access token.
+
+</Notes>
+
+---
+
+# The Authorization Code Flow
+
+<ul>
+  <li>Client requests a response using the Authorization Code at the Tokenn Endpoint</li>
+
+<Highlighter language="http">{`POST /token HTTP/1.1
+    Host: auth.server.co.uk
+    Content-Type: application/x-www-form-urlencoded
+    Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+    grant_type=authorization_code
+    &code=SplxlOBeZQQYbYS6WxSbIA
+    &redirect_uri=https://client.example.org/cb`}</Highlighter>
+
+</ul>
+
+<Notes>
+The authorisation code is an intermediate credential, which encodes the authorisation obtained at step 1. It is therefore opaque to the client and only has meaning to the authorisation server. To retrieve the access token the client must submit the code to the authorisation server, but this time with a direct back-channel request. This is done for two reasons:
+
+- To authenticate confidential clients with the authorisation server before revealing the token;
+- To deliver the token straight to the client, thus avoid exposing it to the browser.
+
+The code-for-token exchange happens at the token endpoint of the authorisation server:
+
+</Notes>
+
+---
+
+# The Authorization Code Flow
+
+<ul>
+    <li>Client receives a response that contains an Access Token in the response body</li>
+
+<Highlighter language="http">{`HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+Pragma: no-cache
+{
+  "access_token" : "SlAV32hkKG",
+  "token_type"   : "Bearer",
+  "expires_in"   : 3600,
+  "scope"        : "myapi-read myapi-write"
+}`}</Highlighter>
+
+</ul>
+
+<Notes>
+On success the authorisation server will return a JSON object with the issued access token:
+
+The expires_in parameter informs the client for how many seconds the access token will be valid. The scope parameter what powers the token actually has, as some of the originally requested scope values may have been denied or others, not-explicitly requested, granted.
+
+The JSON object can include an optional refresh token, which lets the client obtain a new access token from the authorisation server without having to repeat the code flow.
+
+</Notes>
+
+---
+
+## Finally:
+
+<Highlighter language="http">{`GET /resource/v1 HTTP/1.1
+Host: api.example.org
+Authorization: Bearer SlAV32hkKG`}</Highlighter>
+
+<Notes>
+
+The access tokens in OAuth 2.0 are commonly of type bearer, meaning the client just needs to pass the token with each request. The HTTP Authorization header is the recommended method.
+
+If the resource server determines the token to be valid and not expired, it will proceed with servicing the request.
+
+Else, it will return an appropriate error in a HTTP WWW-Authenticate response header.
+
+</Notes>
+
+---
+
+## The Authorization Code Flow:
+
+<ul>
+  <li>Client prepares and sends an Authentication Request</li>
+  <Appear>
+    <li>Authorization Server Authenticates the End-User and obtains consent</li>
+    <li>
+      Authorization Server sends back to the Client with an Authorization Code
+    </li>
+    <li>
+      Client requests a response using the Authorization Code at the Token
+      Endpoint
+    </li>
+    <li>
+      Client receives a response that contains an Access Token in the response
+      body
+    </li>
+  </Appear>
+</ul>
+
+---
+
+# The Implicit Flow
+
+<ul>
+  <li>Client prepares and sends an Authentication Request</li>
+
+<Highlighter language="http">{`HTTP/1.1 302 Found
+Location: https://auth.server.co.uk/authorize?
+          response_type=token 
+          &scope=myapi-read myapi-write
+          &client_id=s6BhdRkqt3
+          &state=bunnies
+          &redirect_uri=http://client.example.org/cb
+`}</Highlighter>
+</ul>
+
+Just like the <i>Authorization Code flow</i>, but response_type set to <code>token</code> instead of <code>code</code>
+
+---
+
+# The Implicit Flow
+
+<ul>
+  <li>Client prepares and sends Authentication Request</li>
+  <Appear>
+    <li>Authorization Server Authenticates the End-User</li>
+    <li>Authorization Server obtains End-User Consent/Authorization</li>
+    <li>Authorization Server sends an Access Token</li>
+
+  </Appear>
+</ul>
+
+---
+
+# OpenID Connect
+
+---
+
+# The ID Token
+
+<Highlighter language="http">{`eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzc
+    yI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5
+    NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZ
+    fV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5Nz
+    AKfQ.ggW8hZ1EuVLuxNuuIJKX_V8a_OMXzR0EHR9R6jgdqrOOF4daGU96Sr_P6q
+    Jp6IcmD3HP99Obi1PRs-cwh3LO-p146waJ8IhehcwL7F09JdijmBqkvPeB2T9CJ
+    NqeGpe-gccMg4vfKjkM8FcGvnzZUN4_KSP0aAp1tOJ1zZwgjxqGByKHiOtX7Tpd
+    QyHE5lcMiKPXfEIQILVq0pc_E2DzL7emopWoaoZTF_m0_N0YzFC6g6EJbOEoRoS
+    K5hoDalrcvRYLSrQAZZKflyuVCyixEoV9GfNQC3_osjzw2PAithfubEEBLuVVk4
+    XUVrWOLrLl0nx7RkKU8NXNHq-rvKMzqg`}</Highlighter>
+
+<Notes>
+
+Features of the ID token:
+
+- Asserts the identity of the user, called subject in OpenID (sub).
+- Specifies the issuing authority (iss).
+- Is generated for a particular audience, i.e. client (aud).
+- May contain a nonce (nonce).
+- May specify when (auth_time) and how, in terms of strength (acr), the user was authenticated.
+- Has an issue (iat) and expiration time (exp).
+- May include additional requested details about the subject, such as name and email address.
+- Is digitally signed, so it can be verified by the intended recipients.
+- May optionally be encrypted for confidentiality.
+
+The ID token statements, or claims, are packaged in a simple JSON object.
+The ID token header, claims JSON and signature are encoded into a base 64 URL-safe string, for easy passing arround, for example as URL parameter.
+
+</Notes>
+
+---
+
+# JWT
+
+import jwt from "./assets/jwt.png";
+
+<img src={jwt} width="40%" />
+
+<Notes>
+    The ID token statements, or claims, are packaged in a simple JSON object.
+    
+    The ID token header, claims JSON and signature are encoded into a base 64 URL-safe string, for easy passing arround, for example as URL parameter.
+
+    The ID token resembles the concept of an identity card, in a standard JWT format, signed by the OpenID Provider (OP). To obtain one the client needs to send the user to their OP with an authentication request.
+
+</Notes>
+
+---
+
+# New words, same thing
+
+import op_rp from "./assets/op_rp.svg";
+
+<img src={op_rp} width="50%" />
+
+<Notes>
+
+- OpenID Connect Provider (OP): OAuth 2.0 Authorization Server that is capable of authenticating the end-user and providing claims to a Relying Party about the authentication event and the end-user.
+- Relying Party (RP): OAuth 2.0 Client application that requires end-user authentication and claims from an OpenID Connect Provider.
+- Entity: Something that has a separate and distinct existence and that can be identified in a context. An end-user is one example of an entity.
+
+</Notes>
+
+---
+
+# Claims and Scope
+
+---
+
+# Required Claims
+
+<Highlighter language="http">{`{
+  "aud"       : "client-12345",
+  "iss"       : "https://autz.service.org",
+  "exp"       : 1311281970,
+  "iat"       : 1311280970,
+  "sub"       : "alice"
+}`}</Highlighter>
+
+---
+
+# Defaults scope and claims
+
+import claims_scope from "./assets/scope_claims.png";
+
+<img src={claims_scope} width="40%" />
+
+---
+
+# OIDC - Authorization Code Flow
+
+<ul>
+  <li>Client prepares and sends an Authentication Request</li>
+
+<Highlighter language="http">{`HTTP/1.1 302 Found
+Location: https://auth.server.co.uk/authorize?
+          response_type=code
+          &scope=openid profile whatever
+          &client_id=s6BhdRkqt3
+          &state=bunnies
+          &redirect_uri=http://client.example.org/cb
+`}</Highlighter>
+</ul>
+
+
+---
+
+
+# OIDC - Authorization Code Flow
+
+<ul>
+  <li>Client prepares and sends an Authentication Request</li>
+  <Appear>
+    <li>Authorization Server Authenticates the End-User and obtains consent</li>
+    <li>
+      Authorization Server sends back to the Client with an Authorization Code
+    </li>
+    <li>
+      Client requests a response using the Authorization Code at the Token
+      Endpoint
+    </li>
+    <li>
+      Client receives a response that contains an ID Token and Access Token in
+      the response body
+    </li>
+    <li>
+      Client validates the ID token and retrieves the End-User's Subject
+      Identifier.
+    </li>
+  </Appear>
+</ul>
+
+
+---
+
+# OIDC - The Implicit Flow
+
+<ul>
+  <li>Client prepares and sends an Authentication Request</li>
+
+<Highlighter language="http">{`HTTP/1.1 302 Found
+Location: https://auth.server.co.uk/authorize?
+          response_type=id_token token 
+          &scope=openid profile whatever
+          &client_id=s6BhdRkqt3
+          &state=bunnies
+          &redirect_uri=http://client.example.org/cb
+`}</Highlighter>
+</ul>
+
+Just like the <i>Authorization Code flow</i>, but <code>response_type</code> set to <code>id_token</code> instead of <code>code</code>
+
+Optionally, <code>token</code> in the <code>response_type</code> asks also for an <code>Access token</code> 
+
+---
+
+
+
+# OIDC - Implicit Flow
+
+<ul>
+     <li>Client prepares and sends Authentication Request</li>
+
+  <Appear>
+    <li>Authorization Server Authenticates the End-User</li>
+    <li>Authorization Server obtains End-User Consent/Authorization</li>
+    <li>Authorization Server sends an ID Token and, if requested, an Access Token</li>
+    <li>
+      Client validates the ID token and retrieves the End-User's Subject
+      Identifier.
+    </li>
+  </Appear>
+</ul>
+
+---
+
+# Secure delegated access
+
+### with OpenID Connect (OIDC)
+
+---
+
+# The end
