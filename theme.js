@@ -4,8 +4,8 @@ export default {
     monospace: '"Roboto Mono", monospace'
   },
   colors: {
-    text: "#333",
-    background: "white",
+    text: "#4a4a4a",
+    background: "#f9f9f9",
     primary: "blue"
   },
   styles: {
@@ -13,6 +13,13 @@ export default {
       fontFamily: "body",
       fontSize: [3, 4, 5, '40px'],
       justifyContent: 'center'
-    }
-  }
+    },
+    pre: {
+      background: '#909090',
+    },
+    code: {
+      background: '#909090',
+    },
+  },
+ 
 };
