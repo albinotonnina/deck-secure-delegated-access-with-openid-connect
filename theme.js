@@ -5,7 +5,7 @@ export default {
   },
   colors: {
     text: "#4a4a4a",
-    background: "#f9f9f9",
+    background: "#f2eaea",
     primary: "blue"
   },
   styles: {
@@ -13,13 +13,7 @@ export default {
       fontFamily: "body",
       fontSize: [3, 4, 5, '40px'],
       justifyContent: 'center'
-    },
-    pre: {
-      background: '#909090',
-    },
-    code: {
-      background: '#909090',
-    },
+    }
   },
  
 };

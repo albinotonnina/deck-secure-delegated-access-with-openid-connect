@@ -268,7 +268,7 @@ They are both called redirect flows, because they operate through Redirect URLs 
 
 Client prepares and sends an Authentication Request
 
-<Highlighter language="http" >{`HTTP/1.1 302 Found
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`HTTP/1.1 302 Found
 Location: https://auth.server.co.uk/authorize?
           response_type=code
           &scope=myapi-read myapi-write bananas
@@ -321,7 +321,7 @@ After that, the server will determine if the client is to be authorised or not, 
 
 Authorization Server sends back to the Client with an Authorization Code
 
-<Highlighter language="http">{`HTTP/1.1 302 Found
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`HTTP/1.1 302 Found
 Location: https://client.example.org/cb?
           code=SplxlOBeZQQYbYS6WxSbIA
           &state=bunnies`}</Highlighter>
@@ -348,7 +348,7 @@ It is therefore opaque to the client and only has meaning to the authorisation s
 
 Client requests a response using the Authorization Code at the Tokenn Endpoint
 
-<Highlighter language="http">{`POST /token HTTP/1.1
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`POST /token HTTP/1.1
     Host: auth.server.co.uk
     Content-Type: application/x-www-form-urlencoded
     Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
@@ -381,7 +381,7 @@ The code-for-token exchange happens at the token endpoint of the authorisation s
 <ul>
     <li>Client receives a response that contains an Access Token in the response body</li>
 
-<Highlighter language="http">{`HTTP/1.1 200 OK
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`HTTP/1.1 200 OK
 Content-Type: application/json
 Cache-Control: no-store
 Pragma: no-cache
@@ -411,7 +411,7 @@ The mode this response is returned vary, JSON String, query parameters, fragment
 
 # Finally:
 
-<Highlighter language="http">{`GET /resource/v1 HTTP/1.1
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`GET /resource/v1 HTTP/1.1
 Host: api.example.org
 Authorization: Bearer SlAV32hkKG`}</Highlighter>
 
@@ -454,7 +454,7 @@ Else, it will return an appropriate error in a HTTP WWW-Authenticate response he
 <ul>
   <li>Client prepares and sends an Authentication Request</li>
 
-<Highlighter language="http">{`HTTP/1.1 302 Found
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`HTTP/1.1 302 Found
 Location: https://auth.server.co.uk/authorize?
           response_type=token 
           &scope=myapi-read myapi-write
@@ -541,7 +541,7 @@ Clients can request claims in two ways:
 
 # The ID Token
 
-<Highlighter language="http">{`eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzc
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzc
     yI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5
     NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZ
     fV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5Nz
@@ -582,9 +582,7 @@ import jwt from "./assets/jwt.png";
 
 <img src={jwt} width="40%" />
 
-header.payload.Signature
-
-xxxxxx.yyyyyyy.zzzzzzzzz
+header.payload.signature
 
 <Notes>
 
@@ -605,7 +603,7 @@ Signature
 
 # Required Claims
 
-<Highlighter language="http">{`{
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`{
   "aud"       : "client-12345",
   "iss"       : "https://autz.service.org",
   "exp"       : 1311281970,
@@ -620,7 +618,7 @@ Signature
 <ul>
   <li>Client prepares and sends an Authentication Request</li>
 
-<Highlighter language="http">{`HTTP/1.1 302 Found
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`HTTP/1.1 302 Found
 Location: https://auth.server.co.uk/authorize?
           response_type=code
           &scope=openid profile whatever
@@ -666,7 +664,7 @@ Note `openid` in scope. That's how we know we are authenticating a user with OID
 <ul>
   <li>Client prepares and sends an Authentication Request</li>
 
-<Highlighter language="http">{`HTTP/1.1 302 Found
+<Highlighter language="http" customStyle={{background: '#d8d6d6'}}>{`HTTP/1.1 302 Found
 Location: https://auth.server.co.uk/authorize?
           response_type=id_token token 
           &scope=openid profile whatever
